@@ -74,7 +74,7 @@ router.post('/login', (req, res, next) => {
 });
 
 /* Update */
-router.post('/profile', (req, res, next) => {
+router.post('/update', (req, res, next) => {
   let user = {},
     /* table de propriétés */
     propsArray = [
