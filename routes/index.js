@@ -27,7 +27,7 @@ let usersSchema = mongoose.Schema({
     description: String,
     phone: String,
     address: String
-  }),
+  });
   usersModel = mongoose.model('users', usersSchema);
 
 hash = (password) => {
