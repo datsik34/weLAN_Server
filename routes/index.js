@@ -16,7 +16,7 @@ mongoose.connect('mongodb://roem:azerty@ds237610.mlab.com:37610/welan', options,
   }
 });
 
-let usersSchema = mongoose.Schema({
+let userSchema = mongoose.Schema({
     id: String,
     username: String,
     email: String,
@@ -28,7 +28,7 @@ let usersSchema = mongoose.Schema({
     phone: String,
     address: String
   }),
-  usersModel = mongoose.model('users', usersSchema);
+  usersModel = mongoose.model('users', userSchema);
 
 hash = (password) => crypto.createHash('sha256').update(`${password}a1d0c6e83f027327d8461063f4ac58a6`).digest('base64').toString();
 
