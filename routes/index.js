@@ -27,14 +27,10 @@ let usersSchema = mongoose.Schema({
     description: String,
     phone: String,
     address: String
-  });
+  }),
   usersModel = mongoose.model('users', usersSchema);
 
-hash = (password) => {
-  let hasher = crypto.createHash('sha256');
-  hasher.update(`${password}a1d0c6e83f027327d8461063f4ac58a6`);
-  return hasher.digest('base64').toString();
-}
+hash = (password) => crypto.createHash('sha256').update(`${password}a1d0c6e83f027327d8461063f4ac58a6`).digest('base64').toString();
 
 /* SignUp */
 router.post('/signup', (req, res, next) => {
@@ -59,7 +55,10 @@ router.post('/signup', (req, res, next) => {
       return res.json({success: true, user});
     });
   } else {
-    return res.json({success: false, error: parseInt((Date.now() - req.body.birthday)/86400000/365)});
+    return res.json({
+      success: false,
+      error: parseInt((Date.now() - req.body.birthday) / 86400000 / 365)
+    });
   }
 });
 
