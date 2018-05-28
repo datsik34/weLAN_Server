@@ -32,7 +32,7 @@ let usersSchema = mongoose.Schema({
 
 hash = (password) => {
   let hasher = crypto.createHash('sha256');
-  hasher.update(password + 'a1d0c6e83f027327d8461063f4ac58a6');
+  hasher.update(`${password}a1d0c6e83f027327d8461063f4ac58a6`);
   return hasher.digest('base64').toString();
 }
 
@@ -56,10 +56,10 @@ router.post('/signup', (req, res, next) => {
       if (err) {
         return res.json({success: false, error: err});
       }
-      return res.json(user);
+      return res.json({success: true, user});
     });
   } else {
-    return res.json({success: false});
+    return res.json({success: false, error: parseInt((Date.now() - req.body.birthday)/86400000/365)});
   }
 });
 
