@@ -46,7 +46,7 @@ router.post('/signup', (req, res, next) => {
     address: null
   });
 
-  /* Check age */
+  /* Check age */ /* 420227200000 = 13 ans */
   if (Date.now() - req.body.birthday > 420227200000) {
     user.save((err, user) => {
       if (err) {
