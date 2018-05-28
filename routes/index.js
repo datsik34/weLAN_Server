@@ -25,7 +25,7 @@ let usersSchema = mongoose.Schema({
     firstname: String,
     lastname: String,
     description: String,
-    phone: Number,
+    phone: String,
     address: String
   }),
   usersModel = mongoose.model('users', usersSchema);
