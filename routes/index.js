@@ -241,39 +241,43 @@ router.post('/event/participate', (req, res, next) => {
         description: user.description,
         phone: user.phone
       }
-      /* Recherche de l'event correspondant à l'ID renseigné pour le modifier */
-      eventsModel.findOne({
-        _id: req.body._id
-      }, (err, event) => {
-        /* Check de la présence de l'utilisateur dans la liste des membres */
-        if (event.info.participants.quantity.current < event.info.participants.quantity.max) {
-          let nbPresence = 0;
-          for (let e of event.info.participants.members) {
-            if (e.user_id == user._id) {
-              nbPresence++;
-            }
-          }
-          /* si l'utilisateur n'est pas déjà présent, on l'ajoute */
-          if (nbPresence < 1) {
-            eventsModel.update({
-              _id: req.body._id
-            }, {
-              $push: {
-                'info.participants.members': newMembers
-              },
-              'info.participants.quantity.current': event.info.participants.members.length + 1
-            }, (err, event) => {
-              if (!err) {
-                return res.json({success: true, event});
+      if (user.description != null && user.phone != null) {
+        /* Recherche de l'event correspondant à l'ID renseigné pour le modifier */
+        eventsModel.findOne({
+          _id: req.body._id
+        }, (err, event) => {
+          /* Check de la présence de l'utilisateur dans la liste des membres */
+          if (event.info.participants.quantity.current < event.info.participants.quantity.max) {
+            let nbPresence = 0;
+            for (let e of event.info.participants.members) {
+              if (e.user_id == user._id) {
+                nbPresence++;
               }
-            });
+            }
+            /* si l'utilisateur n'est pas déjà présent, on l'ajoute */
+            if (nbPresence < 1) {
+              eventsModel.update({
+                _id: req.body._id
+              }, {
+                $push: {
+                  'info.participants.members': newMembers
+                },
+                'info.participants.quantity.current': event.info.participants.members.length + 1
+              }, (err, event) => {
+                if (!err) {
+                  return res.json({success: true, event});
+                }
+              });
+            } else {
+              return res.json({success: false, err, message: 'You\'re currently registered in this event'});
+            }
           } else {
-            return res.json({success: false, err, message: 'You\'re currently registered in this event'});
+            return res.json({success: false, err, message: 'Can\'t join this event, maximum participants quantity reached'});
           }
-        } else {
-          return res.json({success: false, err, message: 'Can\'t join this event, maximum participants quantity reached'});
-        }
-      });
+        });
+      } else {
+        return res.json({success: false, err, message: 'Please, enter a description dans a phone number before to register to an event'});
+      }
     }
   });
 });
