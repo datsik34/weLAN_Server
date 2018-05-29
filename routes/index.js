@@ -230,6 +230,7 @@ router.post('/event/organize', (req, res, next) => {
 });
 
 router.post('/event/participate', (req, res, next) => {
+  /* Recherche de "soi-même" afin d'envoyer nos infos à la DB event */
   usersModel.findOne({
     _id: req.body.user_id
   }, (err, user) => {
@@ -240,9 +241,11 @@ router.post('/event/participate', (req, res, next) => {
         description: user.description,
         phone: user.phone
       }
+      /* Recherche de l'event correspondant à l'ID renseigné pour le modifier */
       eventsModel.findOne({
         _id: req.body._id
       }, (err, event) => {
+        /* Check de la présence de l'utilisateur dans la liste des membres */
         if (event.info.participants.quantity.current < event.info.participants.quantity.max) {
           let nbPresence = 0;
           for (let e of event.info.participants.members) {
@@ -250,6 +253,7 @@ router.post('/event/participate', (req, res, next) => {
               nbPresence++;
             }
           }
+          /* si l'utilisateur n'est pas déjà présent, on l'ajoute */
           if (nbPresence < 1) {
             eventsModel.update({
               _id: req.body._id
