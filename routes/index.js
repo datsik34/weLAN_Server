@@ -217,7 +217,7 @@ router.post('/event/organize', (req, res, next) => {
     _id: req.body.author.id
   }, (err) => {
     if (!err && req.body.author.id) {
-      event.save((err, event) => {
+      event.save((err, event) => { // sauvegarde de l'event
         if (err) {
           return res.json({success: false, err: err});
         }
@@ -230,31 +230,45 @@ router.post('/event/organize', (req, res, next) => {
 });
 
 router.post('/event/participate', (req, res, next) => {
-  usersModel.find({
+  usersModel.findOne({
     _id: req.body.user_id
   }, (err, user) => {
     if (!err) {
       let newMembers = {
-        user_id: user[0]._id,
-        username: user[0].username,
-        description: user[0].description,
-        phone: user[0].phone
+        user_id: user._id,
+        username: user.username,
+        description: user.description,
+        phone: user.phone
       }
-      eventsModel.find({
+      eventsModel.findOne({
         _id: req.body._id
       }, (err, event) => {
-        eventsModel.update({
-          _id: req.body._id
-        }, {
-          $push: {
-            'info.participants.members': newMembers
-          },
-          'info.participants.quantity.current': event[0].info.participants.members.length + 1
-        }, (err, event) => {
-          if (!err) {
-            return res.json({success: true, event, newMembers});
+        if (event.info.participants.quantity.current < event.info.participants.quantity.max) {
+          let nbPresence = 0;
+          for (let e of event.info.participants.members) {
+            if (e.user_id == user._id) {
+              nbPresence++;
+            }
           }
-        });
+          if (nbPresence < 1) {
+            eventsModel.update({
+              _id: req.body._id
+            }, {
+              $push: {
+                'info.participants.members': newMembers
+              },
+              'info.participants.quantity.current': event.info.participants.members.length + 1
+            }, (err, event) => {
+              if (!err) {
+                return res.json({success: true, event});
+              }
+            });
+          } else {
+            return res.json({success: false, err, message: 'You\'re currently registered in this event'});
+          }
+        } else {
+          return res.json({success: false, err, message: 'Can\'t join this event, maximum participants quantity reached'});
+        }
       });
     }
   });
