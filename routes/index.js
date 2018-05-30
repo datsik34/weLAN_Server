@@ -321,7 +321,7 @@ router.get('/event/locate', (req, res, next) => {
         availableEvent.push(e);
       }
     });
-    return res.json({success: true, availableEvent});
+    return res.json({success: true, results: 'in_coming_events', availableEvent});
   });
 });
 
