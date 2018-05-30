@@ -112,6 +112,36 @@ router.post('/login', (req, res, next) => {
   }, (err, user) => res.json({success: true, user}));
 });
 
+router.post('/profile', (req, res, next) => {
+  let eventList = [];
+  /* Grab les infos de l'utilisateur */
+  usersModel.find({
+    _id: req.body._id
+  }, (err, user) => {
+    /* Check si l'utilisateur en question est inscrit dans des events */
+    eventsModel.find({}, (err, event) => {
+      event.map(e => {
+        console.log(e.info.participants.members);
+        /* Check si il y a des participants dans l'event */
+        if (e.info.participants.members.length > 0) {
+          e.info.participants.members.map(el => {
+            /* check si l'id de l'utilisateur est présent dans l'event */
+            if (el.user_id == req.body._id) {
+              eventList.push(e);
+            }
+          });
+        }
+      });
+    }).then(() => {
+      if (eventList.length > 0) {
+        return res.json({success: true, user, eventList});
+      } else {
+        return res.json({success: true, user, err, message: `${eventList.length} in coming events found`});
+      }
+    });
+  });
+});
+
 /* Update */
 router.post('/update', (req, res, next) => {
   let user = {},
@@ -282,8 +312,17 @@ router.post('/event/participate', (req, res, next) => {
   });
 });
 
+/* Return toutes les lans à venir */
 router.get('/event/locate', (req, res, next) => {
-  eventsModel.find({}, (err, event) => res.json({success: true, event}));
+  eventsModel.find({}, (err, event) => {
+    let availableEvent = [];
+    event.map(e => {
+      if (e.dates.start > Date.now() && e.info.participants.quantity.current < e.info.participants.quantity.max) {
+        availableEvent.push(e);
+      }
+    });
+    return res.json({success: true, availableEvent});
+  });
 });
 
 module.exports = router;
