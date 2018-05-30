@@ -30,7 +30,7 @@ let userSchema = mongoose.Schema({
   }),
   usersModel = mongoose.model('users', userSchema),
   eventSchema = mongoose.Schema({
-    "creation_date": String,
+    "creation_date": Date,
     "author": { // informations relatives à l'organisateur
       "id": String, // id de l'organisateur
       "username": String, // username de l'organisateur
@@ -314,10 +314,23 @@ router.post('/event/participate', (req, res, next) => {
 
 /* Return toutes les lans à venir */
 router.get('/event/locate', (req, res, next) => {
+  let array = ['start', 'end']; // ligne à switch sur le front
+
   eventsModel.find({}, (err, event) => {
     let availableEvent = [];
     event.map(e => {
       if (e.dates.start > Date.now() && e.info.participants.quantity.current < e.info.participants.quantity.max) {
+        /* début de l'élément à switch sur le front */
+        let elements = {
+          start: null,
+          end: null
+        }
+        for (let el of array) {
+          elements[el] = JSON.stringify(e.dates[el]).slice(1, -1).split(/"|-|T|:/);
+          elements[el] = `${elements[el][2]}.${elements[el][1]}.${elements[el][0]} - ${elements[el][3]}h${elements[el][4]}`;
+        }
+        console.log(elements);
+        /* fin de l'élément à switch */
         availableEvent.push(e);
       }
     });
