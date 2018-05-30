@@ -315,7 +315,6 @@ router.post('/event/participate', (req, res, next) => {
 /* Return toutes les lans à venir */
 router.get('/event/locate', (req, res, next) => {
   let array = ['start', 'end']; // ligne à switch sur le front
-
   eventsModel.find({}, (err, event) => {
     let availableEvent = [];
     event.map(e => {
@@ -336,6 +335,7 @@ router.get('/event/locate', (req, res, next) => {
     });
     return res.json({success: true, results: 'in_coming_events', availableEvent});
   });
+  return res.json({success: false, message: 'no such event found'});
 });
 
 module.exports = router;
