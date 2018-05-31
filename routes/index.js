@@ -171,7 +171,7 @@ router.post('/update', (req, res, next) => {
 
 router.post('/event/organize', (req, res, next) => {
   let event = new eventsModel({
-    "creation_date": Date.now().toLocaleString(),
+    "creation_date": Date.now(),
     "author": {
       // informations relatives à l'organisateur
       "id": req.body.author.id
@@ -313,12 +313,12 @@ router.post('/event/participate', (req, res, next) => {
 
 /* Return toutes les lans à venir */
 router.get('/event/locate', (req, res, next) => {
-  let array = ['start', 'end']; // ligne à switch sur le front
+  // let array = ['start', 'end'];  ligne à switch sur le front
   eventsModel.find({}, (err, event) => {
     let availableEvent = [];
     event.map(e => {
       if (e.dates.start > Date.now() && e.info.participants.quantity.current < e.info.participants.quantity.max) {
-        /* début de l'élément à switch sur le front */
+        /* début de l'élément à switch sur le front //
         let elements = {
           start: null,
           end: null
@@ -328,7 +328,7 @@ router.get('/event/locate', (req, res, next) => {
           elements[el] = `${elements[el][2]}.${elements[el][1]}.${elements[el][0]} - ${elements[el][3]}h${elements[el][4]}`;
         }
         console.log(elements);
-        /* fin de l'élément à switch */
+        // fin de l'élément à switch */
         availableEvent.push(e);
       }
     });
