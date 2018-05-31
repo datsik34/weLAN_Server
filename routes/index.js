@@ -88,8 +88,8 @@ router.post('/signup', (req, res, next) => {
   });
 
   /* Check age */
-  /* 420227200000 = 13 ans */
-  if (Date.now() - req.body.birthday > 420227200000) {
+  /* 410248800000 = 13 ans */
+  if (Date.now() - req.body.birthday > 410248800000) {
     user.save((err, user) => {
       if (err) {
         return res.json({success: false, error: err});
@@ -159,11 +159,10 @@ router.post('/update', (req, res, next) => {
     ];
 
   /* map sur les props pour checker si il faut modifier des valeurs */
-  propsArray.map(e => {
-    if (req.body[e]) {
-      return user[e] = req.body[e];
-    }
-  });
+  propsArray.map(
+    e => user[e] = e === 'password'
+    ? hash(req.body[e])
+    : req.body[e]);
 
   usersModel.update({
     _id: req.body._id
@@ -172,7 +171,7 @@ router.post('/update', (req, res, next) => {
 
 router.post('/event/organize', (req, res, next) => {
   let event = new eventsModel({
-    "creation_date": Date.now(),
+    "creation_date": Date.now().toLocaleString(),
     "author": {
       // informations relatives à l'organisateur
       "id": req.body.author.id
@@ -271,7 +270,7 @@ router.post('/event/participate', (req, res, next) => {
         description: user.description,
         phone: user.phone
       }
-      if (user.description != null && user.phone != null) {
+      if (user.description && user.phone) {
         /* Recherche de l'event correspondant à l'ID renseigné pour le modifier */
         eventsModel.findOne({
           _id: req.body._id
@@ -306,7 +305,7 @@ router.post('/event/participate', (req, res, next) => {
           }
         });
       } else {
-        return res.json({success: false, err, message: 'Please, enter a description dans a phone number before to register to an event'});
+        return res.json({success: false, err, message: 'Please, enter a description and a phone number before to register to an event'});
       }
     }
   });
@@ -335,7 +334,6 @@ router.get('/event/locate', (req, res, next) => {
     });
     return res.json({success: true, results: 'in_coming_events', availableEvent});
   });
-  return res.json({success: false, message: 'no such event found'});
 });
 
 module.exports = router;
