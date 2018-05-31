@@ -92,7 +92,7 @@ router.post('/signup', (req, res, next) => {
   if (Date.now() - req.body.birthday > 410248800000) {
     user.save((err, user) => {
       if (err) {
-        return res.json({success: false, error: err});
+        return res.json({success: false, err});
       }
       return res.json({success: true, user});
     });
