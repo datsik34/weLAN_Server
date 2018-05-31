@@ -142,6 +142,25 @@ router.post('/profile', (req, res, next) => {
   });
 });
 
+router.post('/upload', (req, res, next) => {
+  if (!req.files) {
+    return res.status(400).send('No files were uploaded.');
+  }
+
+  req.body._id = "5b0fb1e9e236bb4564d91f84";
+  // if (req.body._id) {
+  let sampleFile = req.files.sampleFile;
+
+  sampleFile.mv(`/public/images/avatar/${req.body._id}.png`, err => {
+    if (err) {
+      return res.status(500).send(err);
+    }
+  });
+  // } else {
+  //   return res.status(400).send('Incorrect _id.');
+  // }
+});
+
 /* Update */
 router.post('/update', (req, res, next) => {
   let user = {},
@@ -317,7 +336,7 @@ router.get('/event/locate', (req, res, next) => {
   eventsModel.find({}, (err, event) => {
     let availableEvent = [];
     event.map(e => {
-      if (e.dates.start > Date.now() && e.info.participants.quantity.current < e.info.participants.quantity.max) {
+      if (e.dates.start > Date.now() && e.info.participants.members.length < e.info.participants.quantity.max) {
         /* début de l'élément à switch sur le front //
         let elements = {
           start: null,
