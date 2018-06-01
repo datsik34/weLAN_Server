@@ -60,8 +60,7 @@ let userSchema = mongoose.Schema({
       "description": String, // description de l'event
       "participants": { // infos relatives aux participants
         "quantity": { // nombre de participants
-          "current": Number, // nombre actuel
-          "max": Number, // nombre maximum
+          "max": Number // nombre maximum
         },
         "members": [
           {
