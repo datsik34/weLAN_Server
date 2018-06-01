@@ -110,7 +110,6 @@ router.post('/login', (req, res, next) => {
     password: hash(req.body.password)
   }, (err, user) => {
     if (user && user.email === req.body.email && user.password === hash(req.body.password)) {
-      console.log(user);
       res.json({success: true, user});
     } else {
       res.json({success: false, err});
@@ -127,7 +126,6 @@ router.post('/profile', (req, res, next) => {
     /* Check si l'utilisateur en question est inscrit dans des events */
     eventsModel.find({}, (err, event) => {
       event.map(e => {
-        console.log(e.info.participants.members);
         /* Check si il y a des participants dans l'event */
         if (e.info.participants.members.length > 0) {
           e.info.participants.members.map(el => {
@@ -155,7 +153,6 @@ router.post('/upload', (req, res, next) => {
 
   /* check de l'id utilisateur */
   if (req.body._id) {
-    console.log(req.body._id);
     usersModel.findOne({
       _id: req.body._id
     }, (err, user) => {
