@@ -92,7 +92,7 @@ router.post('/signup', (req, res, next) => {
     birthday: req.body.birthday,
     firstname: null,
     lastname: null,
-    description: 'Description pré-remplie',
+    description: 'Description préremplie',
     phone: '0812345678',
     address: null
   });
