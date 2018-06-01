@@ -302,7 +302,7 @@ router.post('/event/participate', (req, res, next) => {
   usersModel.findOne({
     _id: req.body.user_id
   }, (err, user) => {
-    if (!err) {
+    if (!err && user) {
       let newMembers = {
         user_id: user._id,
         username: user.username,
@@ -346,6 +346,8 @@ router.post('/event/participate', (req, res, next) => {
       } else {
         return res.json({success: false, err, message: 'Please, enter a description and a phone number before to register to an event'});
       }
+    } else {
+      return res.json({succes: false, err, message: 'test'});
     }
   });
 });
