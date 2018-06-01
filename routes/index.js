@@ -1,6 +1,17 @@
 const router = require('express').Router();
 const mongoose = require('mongoose');
 const crypto = require('crypto');
+// const multer = require('multer');
+//
+// let storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'public/images/avatar')
+//   },
+//   filename: (req, file, cb => {
+//     cb(null, file.fieldname + '-' + Date.now())
+//   })
+// });
+// let upload = multer({storage});
 
 const options = {
   server: {
@@ -147,18 +158,27 @@ router.post('/upload', (req, res, next) => {
     return res.status(400).send('No files were uploaded.');
   }
 
-  req.body._id = "5b0fb1e9e236bb4564d91f84";
-  // if (req.body._id) {
-  let sampleFile = req.files.sampleFile;
+  if (req.body._id) {
+    console.log(req.body._id);
+    usersModel.findOne({
+      _id: req.body._id
+    }, (err, user) => {
+      if (user) {
+        let sampleFile = req.files.avatar;
 
-  sampleFile.mv(`/public/images/avatar/${req.body._id}.png`, err => {
-    if (err) {
-      return res.status(500).send(err);
-    }
-  });
-  // } else {
-  //   return res.status(400).send('Incorrect _id.');
-  // }
+        sampleFile.mv(`./public/images/avatar/${req.body._id}.png`, error => {
+          if (error) {
+            return res.status(500).send(error);
+          }
+          return res.status(200).send({success: true});
+        });
+      } else {
+        return res.status(400).send({err, success: false, message: 'User not found.'})
+      }
+    });
+  } else {
+    return res.status(400).send({error: 'Incorrect _id.'});
+  }
 });
 
 /* Update */
