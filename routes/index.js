@@ -1,17 +1,6 @@
 const router = require('express').Router();
 const mongoose = require('mongoose');
 const crypto = require('crypto');
-// const multer = require('multer');
-//
-// let storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, 'public/images/avatar')
-//   },
-//   filename: (req, file, cb => {
-//     cb(null, file.fieldname + '-' + Date.now())
-//   })
-// });
-// let upload = multer({storage});
 
 const options = {
   server: {
@@ -116,10 +105,17 @@ router.post('/signup', (req, res, next) => {
 
 /* Login */
 router.post('/login', (req, res, next) => {
-  usersModel.find({
+  usersModel.findOne({
     email: req.body.email,
     password: hash(req.body.password)
-  }, (err, user) => res.json({success: true, user}));
+  }, (err, user) => {
+    if (user && user.email === req.body.email && user.password === hash(req.body.password)) {
+      console.log(user);
+      res.json({success: true, user});
+    } else {
+      res.json({success: false, err});
+    }
+  });
 });
 
 router.post('/profile', (req, res, next) => {
@@ -157,6 +153,7 @@ router.post('/upload', (req, res, next) => {
     return res.status(400).send('No files were uploaded.');
   }
 
+  /* check de l'id utilisateur */
   if (req.body._id) {
     console.log(req.body._id);
     usersModel.findOne({
@@ -165,7 +162,8 @@ router.post('/upload', (req, res, next) => {
       if (user) {
         let sampleFile = req.files.avatar;
 
-        sampleFile.mv(`./public/images/avatar/${req.body._id}.png`, error => {
+        /* rename et place l'image envoyée */
+        sampleFile.mv(`./public/images/avatar/${req.body._id}.jpg`, error => {
           if (error) {
             return res.status(500).send(error);
           }
