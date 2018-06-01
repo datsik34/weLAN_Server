@@ -255,9 +255,6 @@ router.post('/event/organize', (req, res, next) => {
       "participants": { // infos relatives aux participants
         "quantity": {
           // nombre de participants
-          "current": req.body.info.participants.quantity.current
-            ? req.body.info.participants.quantity.current
-            : null, // nombre actuel
           "max": req.body.info.participants.quantity.max
             ? req.body.info.participants.quantity.max
             : null, // nombre maximum
@@ -315,7 +312,7 @@ router.post('/event/participate', (req, res, next) => {
           _id: req.body._id
         }, (err, event) => {
           /* Check de la présence de l'utilisateur dans la liste des membres */
-          if (event.info.participants.quantity.current < event.info.participants.quantity.max) {
+          if (event.info.participants.members.length < event.info.participants.quantity.max) {
             let nbPresence = 0;
             for (let e of event.info.participants.members) {
               if (e.user_id == user._id) {
@@ -329,8 +326,7 @@ router.post('/event/participate', (req, res, next) => {
               }, {
                 $push: {
                   'info.participants.members': newMembers
-                },
-                'info.participants.quantity.current': event.info.participants.members.length + 1
+                }
               }, (err, event) => {
                 if (!err) {
                   return res.json({success: true, event});
