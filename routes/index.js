@@ -92,8 +92,8 @@ router.post('/signup', (req, res, next) => {
     birthday: req.body.birthday,
     firstname: null,
     lastname: null,
-    description: null,
-    phone: null,
+    description: 'Description pré-remplie',
+    phone: '0812345678',
     address: null
   });
 
