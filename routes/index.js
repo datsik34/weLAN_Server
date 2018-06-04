@@ -131,7 +131,7 @@ router.post('/profile', (req, res, next) => {
           if (e.info.participants.members.length > 0) {
             e.info.participants.members.map(el => {
               /* check si l'id de l'utilisateur est présent dans l'event */
-              if (el.user_id == req.body._id) {
+              if (el.user_id && el.user_id == req.body._id) {
                 eventList.push(e);
               }
             });
@@ -141,7 +141,7 @@ router.post('/profile', (req, res, next) => {
         if (eventList.length > 0) {
           return res.json({success: true, user, eventList});
         } else {
-          return res.json({success: true, user, err, message: `${eventList.length} in coming events found`});
+          return res.json({success: false, user, err, message: `${eventList.length} in coming events found`});
         }
       });
     } else {
