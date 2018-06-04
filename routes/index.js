@@ -144,10 +144,10 @@ router.post('/profile', (req, res, next) => {
           return res.json({success: true, user, err, message: `${eventList.length} in coming events found`});
         }
       });
-    });
-  } else {
-    return res.json({success: false, err, message: 'blablabla'});
-  }
+    } else {
+      return res.json({success: false, err, message: 'blablabla'});
+    }
+  });
 });
 
 router.post('/upload', (req, res, next) => {
