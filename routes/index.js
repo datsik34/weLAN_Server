@@ -43,7 +43,7 @@ let userSchema = mongoose.Schema({
       "start": Date, // date début
       "end": Date // date fin
     },
-    "location": Map, // localisation de l'event (type incertain)
+    "location": String, // localisation de l'event (type incertain)
     "info": { // info relatives à l'event
       "event_name": String, // nom de l'event
       "description": String, // description de l'event
