@@ -123,27 +123,31 @@ router.post('/profile', (req, res, next) => {
   usersModel.find({
     _id: req.body._id
   }, (err, user) => {
-    /* Check si l'utilisateur en question est inscrit dans des events */
-    eventsModel.find({}, (err, event) => {
-      event.map(e => {
-        /* Check si il y a des participants dans l'event */
-        if (e.info.participants.members.length > 0) {
-          e.info.participants.members.map(el => {
-            /* check si l'id de l'utilisateur est présent dans l'event */
-            if (el.user_id == req.body._id) {
-              eventList.push(e);
-            }
-          });
+    if (user) {
+      /* Check si l'utilisateur en question est inscrit dans des events */
+      eventsModel.find({}, (err, event) => {
+        event.map(e => {
+          /* Check si il y a des participants dans l'event */
+          if (e.info.participants.members.length > 0) {
+            e.info.participants.members.map(el => {
+              /* check si l'id de l'utilisateur est présent dans l'event */
+              if (el.user_id == req.body._id) {
+                eventList.push(e);
+              }
+            });
+          }
+        });
+      }).then(() => {
+        if (eventList.length > 0) {
+          return res.json({success: true, user, eventList});
+        } else {
+          return res.json({success: true, user, err, message: `${eventList.length} in coming events found`});
         }
       });
-    }).then(() => {
-      if (eventList.length > 0) {
-        return res.json({success: true, user, eventList});
-      } else {
-        return res.json({success: true, user, err, message: `${eventList.length} in coming events found`});
-      }
     });
-  });
+  } else {
+    return res.json({success: false, err, message: 'blablabla'});
+  }
 });
 
 router.post('/upload', (req, res, next) => {
